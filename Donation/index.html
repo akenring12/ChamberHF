@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donate Now</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <div class="donation-container">
+    <h2>Support Our Cause</h2>
+    <form id="donation-form" method="POST" action="process_donation_test.php">
+      <input type="text" name="name" placeholder="Full Name" required />
+      <input type="email" name="email" placeholder="Email Address" required />
+      <input type="text" name="invoice" placeholder="Invoice Number (optional)" />
+      <input type="number" name="amount" placeholder="Donation Amount (USD)" required min="1" step="0.01" />
+      <button type="submit">Donate with Card</button>
+    </form>
+    <div class="paypal-button-container">
+      <div id="paypal-button"></div>
+    </div>
+  </div>
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+  <script>
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+        const amount = document.querySelector('input[name="amount"]').value;
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: amount
+            }
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          window.location.href = 'thank_you.html';
+        });
+      }
+    }).render('#paypal-button');
+  </script>
+</body>
+</html>
